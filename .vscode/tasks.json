@@ -1,0 +1,49 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Compilar funciones_auxiliares",
+      "type": "shell",
+      "command": "gcc",
+      "args": ["-Wall", "-g", "${workspaceFolder}/funciones_auxiliares.c", "-o", "${workspaceFolder}/funciones_auxiliares", "-lm"],
+      "problemMatcher": "$gcc"
+    },
+    {
+      "label": "Compilar genera_redes",
+      "type": "shell",
+      "command": "gcc",
+      "args": [
+        "-Wall", "-g",
+        "${workspaceFolder}/genera_redes.c",
+        "${workspaceFolder}/funciones_auxiliares.c",
+        "-o", "${workspaceFolder}/genera_redes",
+        "-lm"
+      ],
+      "problemMatcher": "$gcc"
+    },
+    {
+      "label": "Ejecutar funciones_auxiliares",
+      "type": "shell",
+      "command": "${workspaceFolder}/funciones_auxiliares",
+      "problemMatcher": []
+    },
+    {
+      "label": "Ejecutar genera_redes",
+      "type": "shell",
+      "command": "${workspaceFolder}/genera_redes",
+      "problemMatcher": []
+    },
+    {
+      "label": "Build & Run All",
+      "dependsOn": [
+        "Compilar funciones_auxiliares",
+        "Compilar genera_redes",
+        "Ejecutar funciones_auxiliares",
+        "Ejecutar genera_redes"
+      ],
+      "dependsOrder": "sequence",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": []
+    }
+  ]
+}
