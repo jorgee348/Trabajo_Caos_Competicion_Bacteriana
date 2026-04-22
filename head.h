@@ -27,5 +27,7 @@ void  ini_ran(int SEMILLA);
 float Random(void);
 float randomIn(double min, double max);
 void generarErdosRenyi(int n, float p);
+int generaNodo(float pH, float pD);
+void generaRedInicial(int n, float p_hueco, float p_vampiro);
 
 #endif /* HEAD_H */
