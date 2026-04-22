@@ -2,44 +2,36 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Compilar funciones_auxiliares",
-      "type": "shell",
-      "command": "gcc",
-      "args": ["-Wall", "-g", "${workspaceFolder}/funciones_auxiliares.c", "-o", "${workspaceFolder}/funciones_auxiliares", "-lm"],
-      "problemMatcher": "$gcc"
-    },
-    {
-      "label": "Compilar genera_redes",
+      "label": "Compilar proyecto",
       "type": "shell",
       "command": "gcc",
       "args": [
-        "-Wall", "-g",
-        "${workspaceFolder}/genera_redes.c",
+        "-Wall", "-Wextra", "-g",
+        "${workspaceFolder}/main.c",
         "${workspaceFolder}/funciones_auxiliares.c",
-        "-o", "${workspaceFolder}/genera_redes",
+        "${workspaceFolder}/genera_redes.c",
+        "${workspaceFolder}/dinamica.c",
+        "-o", "${workspaceFolder}/programa",
         "-lm"
       ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
       "problemMatcher": "$gcc"
     },
     {
-      "label": "Ejecutar funciones_auxiliares",
+      "label": "Ejecutar proyecto",
       "type": "shell",
-      "command": "${workspaceFolder}/funciones_auxiliares",
+      "command": "${workspaceFolder}/programa",
+      "dependsOn": "Compilar proyecto",
       "problemMatcher": []
     },
     {
-      "label": "Ejecutar genera_redes",
-      "type": "shell",
-      "command": "${workspaceFolder}/genera_redes",
-      "problemMatcher": []
-    },
-    {
-      "label": "Build & Run All",
+      "label": "Build & Run",
       "dependsOn": [
-        "Compilar funciones_auxiliares",
-        "Compilar genera_redes",
-        "Ejecutar funciones_auxiliares",
-        "Ejecutar genera_redes"
+        "Compilar proyecto",
+        "Ejecutar proyecto"
       ],
       "dependsOrder": "sequence",
       "group": { "kind": "build", "isDefault": true },

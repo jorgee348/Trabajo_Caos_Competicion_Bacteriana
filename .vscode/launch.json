@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Compilar y ejecutar",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/programa.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "preLaunchTask": "Compilar proyecto",
+      "setupCommands": [
+        {
+          "description": "Habilitar impresión estructurada en GDB",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}

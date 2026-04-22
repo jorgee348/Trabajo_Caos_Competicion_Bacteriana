@@ -36,11 +36,3 @@ void generarErdosRenyi(int n, float p) {
     }
 }
 
-/*int main() {
-    int nodos = 10;
-    float probabilidad = 0.1;
-
-    generarErdosRenyi(nodos, probabilidad);
-
-    return 0;
-}*/

@@ -23,5 +23,9 @@ typedef unsigned char uchar;
 
 /* ── Prototipos de tus funciones (añádelos aquí) ── */
 /* void mi_funcion(int param); */
+void  ini_ran(int SEMILLA);
+float Random(void);
+float randomIn(double min, double max);
+void generarErdosRenyi(int n, float p);
 
 #endif /* HEAD_H */

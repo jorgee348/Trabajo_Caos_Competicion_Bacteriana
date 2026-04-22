@@ -38,4 +38,3 @@ void  ini_ran(int SEMILLA)
 
     ind_ran=ig1=ig2=ig3=0;
 }
-int main(){}
