@@ -1,10 +1,15 @@
 #include "head.h"
 int main() 
 {
-    ini_ran(12345);
-    int nodos = 20;
+    srand(time(NULL));
+    int SEED = (int)rand();
+    ini_ran(SEED);
+    int nodos = 100;
     float probabilidad = 0.2;
-    generarErdosRenyi(nodos, probabilidad);
-
+    float p_Hueco, p_Vampiro;
+    p_Hueco = 0.5;
+    p_Vampiro = 0.05;
+    //generarErdosRenyi(nodos, probabilidad);
+    generaRedInicial(nodos,p_Hueco,p_Vampiro);
     return 0;
 }
