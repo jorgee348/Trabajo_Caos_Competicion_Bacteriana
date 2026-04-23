@@ -20,6 +20,11 @@ extern float randomIn(double min, double max);
 /* ── Typedefs de conveniencia ── */
 typedef unsigned int  uint;
 typedef unsigned char uchar;
+typedef struct 
+{
+    int *vecinos;  // Arreglo con los IDs de los vecinos
+    int grado;     // Cuántos vecinos tiene este nodo
+} Nodo;
 
 /* ── Prototipos de tus funciones (añádelos aquí) ── */
 /* void mi_funcion(int param); */
@@ -29,5 +34,6 @@ float randomIn(double min, double max);
 void generarErdosRenyi(int n, float p);
 int generaNodo(float pH, float pD);
 void generaRedInicial(int n, float p_hueco, float p_vampiro);
+void generar_listas(int **A, int N, Nodo *red);
 
 #endif /* HEAD_H */

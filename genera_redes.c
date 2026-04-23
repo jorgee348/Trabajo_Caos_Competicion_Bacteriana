@@ -46,15 +46,40 @@ int generaNodo(float pH, float pD)
 }
 void generaRedInicial(int n, float p_hueco, float p_vampiro)
 {
-    int estado_inicial[n];
+    int D[n], P[n], H[n];
     int i;
 
     for(i = 0;i<n;i++)
-    estado_inicial[i] = 0; //Inicializamos el pulmón vacío
+    D[i] = P[i] = H[i] = 0;
 
     for(i = 0;i<n;i++)
-    estado_inicial[i] = generaNodo(p_hueco,p_vampiro);
+    switch (generaNodo(p_hueco,p_vampiro)) 
+    {
+    case 0:H[i] = 1; break;
+    case 1:D[i] = 1; break;
+    case 2:P[i] = 1; break;
+    }
+}
 
-    for(i = 0;i<n;i++)
-    printf("%d", estado_inicial[i]);
+void generar_listas(int **A, int N, Nodo *red) 
+{
+    int i;
+    for (i = 0; i < N; i++) 
+    {
+        int k = 0;
+        for (int j = 0; j < N; j++) {
+            if (A[i][j] == 1) k++;
+        }
+        
+        red[i].grado = k;
+        red[i].vecinos = (int *)malloc(k * sizeof(int));
+        
+        int id_vecino = 0;
+        for (int j = 0; j < N; j++) {
+            if (A[i][j] == 1) {
+                red[i].vecinos[id_vecino] = j;
+                id_vecino++;
+            }
+        }
+    }
 }
