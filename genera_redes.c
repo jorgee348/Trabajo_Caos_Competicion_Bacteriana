@@ -53,12 +53,15 @@ void generaRedInicial(int n, float p_hueco, float p_vampiro)
     D[i] = P[i] = H[i] = 0;
 
     for(i = 0;i<n;i++)
-    switch (generaNodo(p_hueco,p_vampiro)) 
     {
-    case 0:H[i] = 1; break;
-    case 1:D[i] = 1; break;
-    case 2:P[i] = 1; break;
+        switch (generaNodo(p_hueco,p_vampiro)) 
+        {
+        case 0:H[i] = 1; break;
+        case 1:D[i] = 1; break;
+        case 2:P[i] = 1; break;
+        }  
     }
+
 }
 
 void generar_listas(int **A, int N, Nodo *red) 
