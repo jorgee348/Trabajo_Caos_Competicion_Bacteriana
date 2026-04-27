@@ -5,7 +5,7 @@
       "name": "Compilar y ejecutar",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/programa.exe",
+      "program": "${workspaceFolder}/programa",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",

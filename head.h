@@ -12,6 +12,10 @@ extern unsigned int irr[256];
 extern unsigned int ir1;
 extern unsigned char ind_ran,ig1,ig2,ig3;
 
+extern double alpha;  // Probabilidad de reproducción de presas
+extern double beta;   // Probabilidad de infección por depredadores
+extern double mu;     // Probabilidad de muerte de depredadores
+
 extern float Random(void);
 extern void ini_ran(int SEMILLA);
 extern float randomIn(double min, double max);
@@ -35,5 +39,6 @@ void generarErdosRenyi(int n, float p);
 int generaNodo(float pH, float pD);
 void generaRedInicial(int n, float p_hueco, float p_vampiro);
 void generar_listas(int **A, int N, Nodo *red);
+void paso_temporal(Nodo *red, int *P,   int *D,   int *H, int *P_new, int *D_new, int *H_new, int N);
 
 #endif /* HEAD_H */
