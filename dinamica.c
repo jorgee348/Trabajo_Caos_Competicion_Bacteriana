@@ -13,80 +13,76 @@
  *   N      - Número total de nodos
  */
 
-void paso_temporal(Nodo *red, int *P,   int *D,   int *H, int *P_new, int *D_new, int *H_new, int N)
+void paso_temporal(Red *red, Estado *estado, Estado *estado_aux, Parametros *params)
 {
-    // ── 1. Copiar el estado actual en los vectores futuros ──────────────────
-    // Punto de partida: el futuro es igual al presente,
-    // y sólo modificamos lo que cambia.
-    for (int i = 0; i < N; i++) {
-        P_new[i] = P[i];
-        D_new[i] = D[i];
-        H_new[i] = H[i];
+    int N = red->N;
+
+    // ── 1. Copiar estado actual en el buffer auxiliar ─────────────────────
+    for (int i = 0; i < N; i++)
+    {
+        estado_aux->P[i] = estado->P[i];
+        estado_aux->D[i] = estado->D[i];
+        estado_aux->H[i] = estado->H[i];
     }
 
-    // ── 2. Aplicar las reglas sobre cada nodo ───────────────────────────────
-    for (int i = 0; i < N; i++) 
+    // ── 2. Aplicar reglas leyendo estado y escribiendo en estado_aux ──────
+    for (int i = 0; i < N; i++)
     {
-
-        // ── Regla 3: Depredador muere → Hueco  (D --mu--> H) ───────────────
-        // Se evalúa primero para no mezclar lógica con las demás reglas.
-        if (D[i] == 1)
+        // Regla 3: Depredador muere → Hueco  (D --mu--> H)
+        if (estado->D[i] == 1)
         {
-            if (Random() < mu) 
+            if (Random() < params->mu)
             {
-                D_new[i] = 0;
-                H_new[i] = 1;
+                estado_aux->D[i] = 0;
+                estado_aux->H[i] = 1;
             }
-            // Si no muere, D_new[i] ya vale 1 por la copia inicial
         }
 
-        // ── Regla 1: Presa atacada por vecino depredador (P+D --beta--> 2D) ─
-        else if (P[i] == 1) 
+        // Regla 1: Presa atacada por depredador vecino (P+D --beta--> 2D)
+        else if (estado->P[i] == 1)
         {
-            // Recorremos los vecinos buscando algún depredador
-            for (int k = 0; k < red[i].grado; k++) 
+            for (int k = 0; k < red->nodos[i].grado; k++)
             {
-                int j = red[i].vecinos[k];   // ID del vecino k
+                int j = red->nodos[i].vecinos[k];
 
-                if (D[j] == 1) 
-                {             // Vecino es depredador (estado PASADO)
-                    if (Random() < beta) 
+                if (estado->D[j] == 1)          // Vecino depredador (estado PASADO)
+                {
+                    if (Random() < params->beta)
                     {
-                        P_new[i] = 0;
-                        D_new[i] = 1;
-                        break;               // Un único evento por paso temporal
+                        estado_aux->P[i] = 0;
+                        estado_aux->D[i] = 1;
+                        break;
                     }
                 }
             }
         }
 
-        // ── Regla 2: Hueco colonizado por vecino presa (P+H --alpha--> 2P) ──
-        else if (H[i] == 1) 
+        // Regla 2: Hueco colonizado por presa vecina (P+H --alpha--> 2P)
+        else if (estado->H[i] == 1)
         {
-            // Recorremos los vecinos buscando alguna presa
-            for (int k = 0; k < red[i].grado; k++) 
+            for (int k = 0; k < red->nodos[i].grado; k++)
             {
-                int j = red[i].vecinos[k];   // ID del vecino k
+                int j = red->nodos[i].vecinos[k];
 
-                if (P[j] == 1) 
-                {             // Vecino es presa (estado PASADO)
-                    if (Random() < alpha) 
+                if (estado->P[j] == 1)          // Vecino presa (estado PASADO)
+                {
+                    if (Random() < params->alpha)
                     {
-                        H_new[i] = 0;
-                        P_new[i] = 1;
-                        break;               // Un único evento por paso temporal
+                        estado_aux->H[i] = 0;
+                        estado_aux->P[i] = 1;
+                        break;
                     }
                 }
             }
         }
     }
 
-    // ── 3. Actualizar el estado actual con el futuro ────────────────────────
-    for (int i = 0; i < N; i++) 
+    // ── 3. Volcar el buffer auxiliar sobre el estado actual ───────────────
+    for (int i = 0; i < N; i++)
     {
-        P[i] = P_new[i];
-        D[i] = D_new[i];
-        H[i] = H_new[i];
+        estado->P[i] = estado_aux->P[i];
+        estado->D[i] = estado_aux->D[i];
+        estado->H[i] = estado_aux->H[i];
     }
 }
     
