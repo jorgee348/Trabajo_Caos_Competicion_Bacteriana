@@ -109,13 +109,13 @@ void generarErdosRenyi(Red *red, float p)
         }
     }
 
-    printf("Matriz de adyacencia (Red Erdos-Renyi %d, %.2f):\n", N, p);
+   /* printf("Matriz de adyacencia (Red Erdos-Renyi %d, %.2f):\n", N, p);
     for (int i = 0; i < N; i++)
     {
         for (int j = 0; j < N; j++)
             printf("%d ", red->A[i][j]);
         printf("\n");
-    }
+    }*/
 }
 
 int generaNodo(float pH, float pD)

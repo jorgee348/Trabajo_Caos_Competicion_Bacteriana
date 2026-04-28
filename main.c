@@ -1,10 +1,10 @@
-#include "head.h"
+/*#include "head.h"
 
-#define N_NODOS   100
+#define N_NODOS   10000
 #define P_ENLACE  0.1f
 #define P_HUECO   0.3f
 #define P_DEPRED  0.2f
-#define PASOS     1000
+#define PASOS     10000
 #define SEMILLA   42
 
 void imprimir_estado(int t, Estado *estado, int N);
@@ -20,7 +20,7 @@ int main()
     generar_listas(red);                // Construye red->nodos desde red->A
 
     // 3. Condiciones iniciales
-    Estado *estado     = crear_estado(N_NODOS);
+    Estado *estado = crear_estado(N_NODOS);
     Estado *estado_aux = crear_estado(N_NODOS);   // Buffer para actualización síncrona
     generaRedInicial(red, estado, P_HUECO, P_DEPRED);
 
@@ -40,6 +40,93 @@ int main()
     liberar_estado(estado_aux);
 
     return 0;
+}
+
+void imprimir_estado(int t, Estado *estado, int N)
+{
+    int nP = 0, nD = 0, nH = 0;
+
+    for (int i = 0; i < N; i++) {
+        nP += estado->P[i];
+        nD += estado->D[i];
+        nH += estado->H[i];
+    }
+
+    printf("%d\t%d\t%d\t%d\n", t, nP, nD, nH);
+}*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "head.h"
+
+#define N_NODOS   10000
+#define P_ENLACE  0.1f
+#define P_HUECO   0.3f
+#define P_DEPRED  0.2f
+#define PASOS     100
+#define SEMILLA   42
+
+void guardar_estado(FILE *fichero, int t, Estado *estado, int N);
+void imprimir_estado(int t, Estado *estado, int N);
+
+int main(void)
+{
+    // 1. Inicializar el generador aleatorio
+    ini_ran(SEMILLA);
+
+    // 2. Crear y rellenar la red
+    Red *red = crear_red(N_NODOS);
+    generarErdosRenyi(red, P_ENLACE);
+    generar_listas(red);
+
+    // 3. Condiciones iniciales
+    Estado *estado     = crear_estado(N_NODOS);
+    Estado *estado_aux = crear_estado(N_NODOS);
+    generaRedInicial(red, estado, P_HUECO, P_DEPRED);
+
+    // 4. Parámetros de la dinámica
+    Parametros params = { .alpha = 0.3, .beta = 0.5, .mu = 0.1 };
+
+    // 5. Abrir fichero de salida
+    FILE *fichero = fopen("resultados.txt", "w");
+    if (!fichero)
+    {
+        fprintf(stderr, "Error: no se pudo abrir resultados.txt\n");
+        return EXIT_FAILURE;
+    }
+    fprintf(fichero, "Paso\tPresa\tDepredador\tHueco\n");   // Cabecera
+
+    // 6. Bucle de simulación
+    printf("Paso\tPresa\tDepredador\tHueco\n");
+    for (int t = 0; t < PASOS; t++)
+    {
+        imprimir_estado(t, estado, N_NODOS);                // Salida por pantalla
+        guardar_estado(fichero, t, estado, N_NODOS);        // Salida a fichero
+        paso_temporal(red, estado, estado_aux, &params);
+    }
+
+    // 7. Cerrar fichero y liberar memoria
+    fclose(fichero);
+    liberar_red(red);
+    liberar_estado(estado);
+    liberar_estado(estado_aux);
+
+    return 0;
+}
+
+
+void guardar_estado(FILE *fichero, int t, Estado *estado, int N)
+{
+    int nP = 0, nD = 0, nH = 0;
+
+    for (int i = 0; i < N; i++)
+    {
+        nP += estado->P[i];
+        nD += estado->D[i];
+        nH += estado->H[i];
+    }
+
+    fprintf(fichero, "%d\t%d\t%d\t%d\n", t, nP, nD, nH);
 }
 
 void imprimir_estado(int t, Estado *estado, int N)
