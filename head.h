@@ -72,6 +72,9 @@ void liberar_estado(Estado *estado);
 void generaRedInicial(Red *red, Estado *estado, float p_hueco, float p_depredador);
 void paso_temporal(Red *red, Estado *estado, Estado *estado_aux, Parametros *params);
 void imprimir_estado(int t, Estado *estado, int N);
+FILE *crea_fichero(const char *nombre);
+void  actualiza_fichero(FILE *fichero, int t, Estado *estado, int N);
+void  cierra_fichero(FILE *fichero);
 
 
 #endif /* HEAD_H */

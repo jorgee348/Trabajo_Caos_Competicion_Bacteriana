@@ -63,7 +63,7 @@ void imprimir_estado(int t, Estado *estado, int N)
 #define P_ENLACE  0.1f
 #define P_HUECO   0.3f
 #define P_DEPRED  0.2f
-#define PASOS     100
+#define PASOS     50
 #define SEMILLA   42
 
 void guardar_estado(FILE *fichero, int t, Estado *estado, int N);
@@ -71,8 +71,10 @@ void imprimir_estado(int t, Estado *estado, int N);
 
 int main(void)
 {
-    // 1. Inicializar el generador aleatorio
-    ini_ran(SEMILLA);
+    int seed;
+    srand(time(NULL));
+    seed = rand();
+    ini_ran(seed);
 
     // 2. Crear y rellenar la red
     Red *red = crear_red(N_NODOS);
@@ -87,26 +89,18 @@ int main(void)
     // 4. Parámetros de la dinámica
     Parametros params = { .alpha = 0.3, .beta = 0.5, .mu = 0.1 };
 
-    // 5. Abrir fichero de salida
-    FILE *fichero = fopen("resultados.txt", "w");
-    if (!fichero)
-    {
-        fprintf(stderr, "Error: no se pudo abrir resultados.txt\n");
-        return EXIT_FAILURE;
-    }
-    fprintf(fichero, "Paso\tPresa\tDepredador\tHueco\n");   // Cabecera
+// 5. Abrir fichero
+    FILE *fichero = crea_fichero("resultados.txt");
 
-    // 6. Bucle de simulación
-    printf("Paso\tPresa\tDepredador\tHueco\n");
+// 6. Bucle de simulación
     for (int t = 0; t < PASOS; t++)
     {
-        imprimir_estado(t, estado, N_NODOS);                // Salida por pantalla
-        guardar_estado(fichero, t, estado, N_NODOS);        // Salida a fichero
+        actualiza_fichero(fichero, t, estado, N_NODOS);
         paso_temporal(red, estado, estado_aux, &params);
     }
 
     // 7. Cerrar fichero y liberar memoria
-    fclose(fichero);
+    cierra_fichero(fichero);
     liberar_red(red);
     liberar_estado(estado);
     liberar_estado(estado_aux);
@@ -115,29 +109,3 @@ int main(void)
 }
 
 
-void guardar_estado(FILE *fichero, int t, Estado *estado, int N)
-{
-    int nP = 0, nD = 0, nH = 0;
-
-    for (int i = 0; i < N; i++)
-    {
-        nP += estado->P[i];
-        nD += estado->D[i];
-        nH += estado->H[i];
-    }
-
-    fprintf(fichero, "%d\t%d\t%d\t%d\n", t, nP, nD, nH);
-}
-
-void imprimir_estado(int t, Estado *estado, int N)
-{
-    int nP = 0, nD = 0, nH = 0;
-
-    for (int i = 0; i < N; i++) {
-        nP += estado->P[i];
-        nD += estado->D[i];
-        nH += estado->H[i];
-    }
-
-    printf("%d\t%d\t%d\t%d\n", t, nP, nD, nH);
-}
