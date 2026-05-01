@@ -1,5 +1,10 @@
 #include "head.h"
 
+void genera_nombre(char *nombre, Parametros *params, int N, float p_enlace, float p_hueco, float p_depred, int pasos)
+{
+    snprintf(nombre, 256, "N%d_pe%.2f_ph%.2f_pd%.2f_a%.2f_b%.2f_mu%.2f_t%d.txt", N, p_enlace, p_hueco, p_depred, params->alpha, params->beta, params->mu, pasos);
+}
+
 FILE *crea_fichero(const char *nombre)
 {
     FILE *fichero = fopen(nombre, "w");

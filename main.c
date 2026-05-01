@@ -90,8 +90,10 @@ int main(void)
     Parametros params = { .alpha = 0.3, .beta = 0.5, .mu = 0.1 };
 
 // 5. Abrir fichero
-    FILE *fichero = crea_fichero("resultados.txt");
-
+    
+    char nombre[256];
+    genera_nombre(nombre, &params, N_NODOS, P_ENLACE, P_HUECO, P_DEPRED, PASOS);
+    FILE *fichero = crea_fichero(nombre);
 // 6. Bucle de simulación
     for (int t = 0; t < PASOS; t++)
     {
