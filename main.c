@@ -87,8 +87,8 @@ int main(void)
     generaRedInicial(red, estado, P_HUECO, P_DEPRED);
 
     // 4. Parámetros de la dinámica
-    Parametros params = { .alpha = 0.3, .beta = 0.5, .mu = 0.1 };
-
+    //Parametros params = { .alpha = 0.3, .beta = 0.5, .mu = 0.1 }; Son los que estaban de primeras
+    Parametros params = { .alpha = 0.5, .beta = 0.1, .mu = 0.6 }; //Para ir probando
 // 5. Abrir fichero
     
     char nombre[256];
@@ -100,12 +100,22 @@ int main(void)
         actualiza_fichero(fichero, t, estado, N_NODOS);
         paso_temporal(red, estado, estado_aux, &params);
     }
-
+    
     // 7. Cerrar fichero y liberar memoria
     cierra_fichero(fichero);
     liberar_red(red);
     liberar_estado(estado);
     liberar_estado(estado_aux);
+
+    // 8. Lanza Gnuplot
+    char comando[512];
+    snprintf(comando, sizeof(comando),
+    "\"\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\" "
+    "-e \"fichero='%s'\" "
+    "scripts/plot_evolucion.gp\"",
+    nombre);
+
+    system(comando);
 
     return 0;
 }
