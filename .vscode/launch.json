@@ -21,6 +21,26 @@
           "ignoreFailures": true
         }
       ]
+    },
+    //Esta parte me la ha generado automáticamente al entrar.
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": true,
+      "cwd": "c:/Users/julio/Documents/Curso_3/Caos/Trabajo/Trabajo_Caos_Competicion_Bacteriana",
+      "program": "c:/Users/julio/Documents/Curso_3/Caos/Trabajo/Trabajo_Caos_Competicion_Bacteriana/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
     }
   ]
 }
