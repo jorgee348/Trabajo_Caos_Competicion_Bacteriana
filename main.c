@@ -60,8 +60,8 @@ void imprimir_estado(int t, Estado *estado, int N)
 #include "head.h"
 
 #define N_NODOS   10000
-#define P_ENLACE  0.1f
-#define P_HUECO   0.3f
+#define P_ENLACE  0.3f //En 0.003 más o menos se estabiliza en muy pocos depredadores pero no se llegan a extinguir
+#define P_HUECO   0.3f //La primera era 0.3
 #define P_DEPRED  0.2f
 #define PASOS     50
 #define SEMILLA   42
@@ -88,7 +88,7 @@ int main(void)
 
     // 4. Parámetros de la dinámica
     //Parametros params = { .alpha = 0.3, .beta = 0.5, .mu = 0.1 }; Son los que estaban de primeras
-    Parametros params = { .alpha = 0.5, .beta = 0.1, .mu = 0.6 }; //Para ir probando
+    Parametros params = { .alpha = 0.2, .beta = 0.05, .mu = 0.85 }; //Para ir probando
 // 5. Abrir fichero
     
     char nombre[256];
