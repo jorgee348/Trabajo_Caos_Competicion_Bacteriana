@@ -11,6 +11,7 @@
         "${workspaceFolder}/funciones_auxiliares.c",
         "${workspaceFolder}/genera_redes.c",
         "${workspaceFolder}/dinamica.c",
+        "${workspaceFolder}/output.c",
         "-o", "${workspaceFolder}/programa",
         "-lm"
       ],
