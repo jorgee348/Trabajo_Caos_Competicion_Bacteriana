@@ -38,3 +38,85 @@ void  ini_ran(int SEMILLA)
 
     ind_ran=ig1=ig2=ig3=0;
 }
+
+void barrido_parametros(Red *red, Estado *estado, Estado *estado_aux,
+                        Parametros *params, int N, float p_enlace,
+                        float p_hueco, float p_depred, int pasos)
+{
+    system("if not exist Dat_Simulaciones mkdir Dat_Simulaciones");
+
+    FILE *fp = fopen("Dat_Simulaciones/barrido_alpha_mu.dat", "wb"); // wb → saltos de línea limpios
+    if (!fp) {
+        fprintf(stderr, "Error: no se pudo crear barrido_alpha_mu.dat\n");
+        exit(EXIT_FAILURE);
+    }
+    fprintf(fp, "# alpha\tmu\tP_est\tD_est\tregimen\n");
+    fflush(fp);
+
+    float alpha_vals[] = {0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40,
+                      0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.80};
+    float mu_vals[]    = {0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40,
+                      0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.85};
+    int n_alpha = 15, n_mu = 15;
+    int total = n_alpha * n_mu;
+    int actual = 0;
+
+    for (int i = 0; i < n_alpha; i++)
+    {
+        params->alpha = alpha_vals[i];
+
+        for (int j = 0; j < n_mu; j++)
+        {
+            params->mu = mu_vals[j];
+
+            // ── Liberar listas de vecinos de forma segura ─────────────────
+            for (int k = 0; k < N; k++) {
+                if (red->nodos[k].vecinos != NULL) {
+                    free(red->nodos[k].vecinos);
+                    red->nodos[k].vecinos = NULL;
+                }
+                red->nodos[k].grado = 0;
+            }
+
+            generarErdosRenyi(red, p_enlace);
+            generar_listas(red);
+            generaRedInicial(red, estado, p_hueco, p_depred);
+
+            for (int t = 0; t < pasos; t++)
+                paso_temporal(red, estado, estado_aux, params);
+
+            int nP = 0, nD = 0;
+            for (int k = 0; k < N; k++) {
+                nP += estado->P[k];
+                nD += estado->D[k];
+            }
+
+            int regimen = 0;
+            if      (nD == 0) regimen = 1;
+            else if (nP == 0) regimen = 2;
+
+            fprintf(fp, "%.2f\t%.2f\t%d\t%d\t%d\n",
+                    alpha_vals[i], mu_vals[j], nP, nD, regimen);
+            fflush(fp);
+
+            // Barra de progreso
+            actual++;
+            int porcentaje = (actual * 100) / total;
+            int bloques    = porcentaje / 5;
+            printf("\r[");
+            for (int b = 0; b < 20; b++)
+                printf("%c", b < bloques ? '#' : '-');
+            printf("] %3d%%  alpha=%.2f  mu=%.2f  P=%4d  D=%4d",
+                   porcentaje, alpha_vals[i], mu_vals[j], nP, nD);
+            fflush(stdout);
+        }
+
+        if (i < n_alpha - 1) {
+        fprintf(fp, "\n\n");
+        fflush(fp);
+        }
+    }
+
+    fclose(fp);
+    printf("\nBarrido completado.\n");
+}

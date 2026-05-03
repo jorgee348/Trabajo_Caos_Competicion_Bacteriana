@@ -54,7 +54,7 @@ void imprimir_estado(int t, Estado *estado, int N)
 
     printf("%d\t%d\t%d\t%d\n", t, nP, nD, nH);
 }*/
-
+/*
 #include <stdio.h>
 #include <stdlib.h>
 #include "head.h"
@@ -119,5 +119,96 @@ int main(void)
 
     return 0;
 }
+*/
+#include <stdio.h>
+#include <stdlib.h>
+#include "head.h"
 
+#define N_NODOS   1000
+#define P_ENLACE  0.3f
+#define P_HUECO   0.3f
+#define P_DEPRED  0.2f
+#define PASOS     100
+#define SEMILLA   42
+
+int main(void)
+{
+    // ── 1. Semilla ────────────────────────────────────────────────────────
+    int seed;
+    srand(time(NULL));
+    seed = rand();
+    ini_ran(seed);
+
+    // ── 2. Elegir modo ────────────────────────────────────────────────────
+    int modo;
+    printf("=== SIMULADOR RED BACTERIAS ===\n");
+    printf("  1. Simulacion con parametros fijos\n");
+    printf("  2. Barrido de parametros (alpha x mu)\n");
+    printf("Selecciona modo [1/2]: ");
+    scanf("%d", &modo);
+
+    // ── 3. Crear estructuras comunes ──────────────────────────────────────
+    Red    *red        = crear_red(N_NODOS);
+    Estado *estado     = crear_estado(N_NODOS);
+    Estado *estado_aux = crear_estado(N_NODOS);
+    Parametros params  = { .alpha = 0.2, .beta = 0.05, .mu = 0.85 };
+
+    // ── MODO 1: Simulación con parámetros fijos ───────────────────────────
+    if (modo == 1)
+    {
+        generarErdosRenyi(red, P_ENLACE);
+        generar_listas(red);
+        generaRedInicial(red, estado, P_HUECO, P_DEPRED);
+
+        char nombre[256];
+        genera_nombre(nombre, &params, N_NODOS, P_ENLACE, P_HUECO, P_DEPRED, PASOS);
+        FILE *fichero = crea_fichero(nombre);
+
+        for (int t = 0; t < PASOS; t++)
+        {
+            actualiza_fichero(fichero, t, estado, N_NODOS);
+            paso_temporal(red, estado, estado_aux, &params);
+        }
+        // Guardar el último paso
+        actualiza_fichero(fichero, PASOS, estado, N_NODOS);
+        cierra_fichero(fichero);
+
+        printf("Simulacion completada. Datos en: %s\n", nombre);
+
+        // Crear carpeta plots y lanzar gnuplot
+        system("if not exist plots mkdir plots");
+        // En modo 1:
+        char comando[512];
+        snprintf(comando, sizeof(comando),
+            "start gnuplot -e \"fichero='%s'\" scripts/plot_evolucion.gp",
+            nombre);
+        system(comando);
+    }
+
+    // ── MODO 2: Barrido de parámetros ─────────────────────────────────────
+    else if (modo == 2)
+    {
+        // beta se mantiene fija durante el barrido, solo varían alpha y mu
+        printf("Beta fija en el barrido: %.2f\n", params.beta);
+        printf("Iniciando barrido alpha x mu (%d pasos por simulacion)...\n", PASOS);
+
+        barrido_parametros(red, estado, estado_aux, &params,
+                           N_NODOS, P_ENLACE, P_HUECO, P_DEPRED, PASOS);
+
+        system("if not exist plots mkdir plots");
+        system("start gnuplot scripts/plot_mapa_calor.gp");
+    }
+
+    else
+    {
+        printf("Modo no valido. Elige 1 o 2.\n");
+    }
+
+    // ── 4. Liberar memoria ────────────────────────────────────────────────
+    liberar_red(red);
+    liberar_estado(estado);
+    liberar_estado(estado_aux);
+
+    return 0;
+}
 

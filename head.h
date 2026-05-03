@@ -61,7 +61,9 @@ int generaNodo(float pH, float pD); // Determina el estado inicial de un nodo de
 //void generaRedInicial(int n, float p_hueco, float p_vampiro); // Genera las condiciones iniciales de la red
 //void generar_listas(int **A, int N, Nodo *red); // A partir de la matriz A, genera las listas de vecinos
 //void paso_temporal(Nodo *red, int *P,   int *D,   int *H, int *P_new, int *D_new, int *H_new, int N);
-
+void barrido_parametros(Red *red, Estado *estado, Estado *estado_aux, //Función para crear mapas de calor
+                        Parametros *params, int N, float p_enlace,
+                        float p_hueco, float p_depred, int pasos);
 
 Red *crear_red(int N); //
 void liberar_red(Red *red);
