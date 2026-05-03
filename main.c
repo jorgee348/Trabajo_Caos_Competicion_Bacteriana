@@ -125,9 +125,9 @@ int main(void)
 #include "head.h"
 
 #define N_NODOS   1000
-#define P_ENLACE  0.3f
-#define P_HUECO   0.3f
-#define P_DEPRED  0.2f
+#define P_ENLACE  0.1f
+#define P_HUECO   0.2f
+#define P_DEPRED  0.3f
 #define PASOS     100
 #define SEMILLA   42
 
@@ -144,14 +144,16 @@ int main(void)
     printf("=== SIMULADOR RED BACTERIAS ===\n");
     printf("  1. Simulacion con parametros fijos\n");
     printf("  2. Barrido de parametros (alpha x mu)\n");
-    printf("Selecciona modo [1/2]: ");
+    printf("  3. Espacio de fases (P vs D)\n");
+    printf("Selecciona modo [1/2/3]: ");
     scanf("%d", &modo);
+
 
     // ── 3. Crear estructuras comunes ──────────────────────────────────────
     Red    *red        = crear_red(N_NODOS);
     Estado *estado     = crear_estado(N_NODOS);
     Estado *estado_aux = crear_estado(N_NODOS);
-    Parametros params  = { .alpha = 0.2, .beta = 0.05, .mu = 0.85 };
+    Parametros params  = { .alpha = 0.4, .beta = 0.3, .mu = 0.2 };
 
     // ── MODO 1: Simulación con parámetros fijos ───────────────────────────
     if (modo == 1)
@@ -199,9 +201,44 @@ int main(void)
         system("start gnuplot scripts/plot_mapa_calor.gp");
     }
 
+    // ── MODO 3: Espacio de fases ──────────────────────────────────────────
+else if (modo == 3)
+    {
+        generarErdosRenyi(red, P_ENLACE);
+        generar_listas(red);
+        generaRedInicial(red, estado, P_HUECO, P_DEPRED);
+
+        // Usar más pasos para ver bien la trayectoria completa
+        int pasos_fases = 300;
+
+        char nombre[256];
+        genera_nombre(nombre, &params, N_NODOS, P_ENLACE, P_HUECO, P_DEPRED, pasos_fases);
+        FILE *fichero = crea_fichero(nombre);
+
+        for (int t = 0; t < pasos_fases; t++)
+        {
+            actualiza_fichero(fichero, t, estado, N_NODOS);
+            paso_temporal(red, estado, estado_aux, &params);
+        }
+        actualiza_fichero(fichero, pasos_fases, estado, N_NODOS);
+        cierra_fichero(fichero);
+
+        printf("Simulacion completada. Datos en: %s\n", nombre);
+
+        system("if not exist plots mkdir plots");
+        char comando[512];
+        snprintf(comando, sizeof(comando),
+            "start gnuplot -e \"fichero='%s'\" -e \"N_val=%d\" "
+            "-e \"alpha_val=%.2f\" -e \"beta_val=%.2f\" -e \"mu_val=%.2f\" "
+            "scripts/plot_espacio_fases.gp",
+            nombre, N_NODOS, params.alpha, params.beta, params.mu);
+        system(comando);
+    }
+
+
     else
     {
-        printf("Modo no valido. Elige 1 o 2.\n");
+        printf("Modo no valido. Elige 1, 2 o 3.\n");
     }
 
     // ── 4. Liberar memoria ────────────────────────────────────────────────
