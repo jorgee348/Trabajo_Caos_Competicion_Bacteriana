@@ -125,10 +125,10 @@ int main(void)
 #include "head.h"
 
 #define N_NODOS   1000
-#define P_ENLACE  0.1f
-#define P_HUECO   0.2f
-#define P_DEPRED  0.3f
-#define PASOS     100
+#define P_ENLACE  0.01f
+#define P_HUECO   0.4f
+#define P_DEPRED  0.4f
+#define PASOS     500
 #define SEMILLA   42
 
 int main(void)
@@ -153,7 +153,7 @@ int main(void)
     Red    *red        = crear_red(N_NODOS);
     Estado *estado     = crear_estado(N_NODOS);
     Estado *estado_aux = crear_estado(N_NODOS);
-    Parametros params  = { .alpha = 0.4, .beta = 0.3, .mu = 0.2 };
+    Parametros params = { .alpha = 0.3, .beta = 0.3, .mu = 0.6 };
 
     // ── MODO 1: Simulación con parámetros fijos ───────────────────────────
     if (modo == 1)
