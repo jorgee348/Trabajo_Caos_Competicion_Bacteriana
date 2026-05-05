@@ -78,6 +78,7 @@ FILE *crea_fichero(const char *nombre);
 void  actualiza_fichero(FILE *fichero, int t, Estado *estado, int N);
 void  cierra_fichero(FILE *fichero);
 void genera_nombre(char *nombre, Parametros *params, int N, float p_enlace, float p_hueco, float p_depred, int pasos);
+void genera_campo(Parametros *params, int N, float p_enlace, int M);
 
 
 #endif /* HEAD_H */

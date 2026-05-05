@@ -144,8 +144,9 @@ int main(void)
     printf("=== SIMULADOR RED BACTERIAS ===\n");
     printf("  1. Simulacion con parametros fijos\n");
     printf("  2. Barrido de parametros (alpha x mu)\n");
-    printf("  3. Espacio de fases (P vs D)\n");
-    printf("Selecciona modo [1/2/3]: ");
+    printf("  3. Trayectoria en el espacio de fases (P vs D)\n");
+    printf("  4. Retrato de fases (P vs D)\n");
+    printf("Selecciona modo [1/2/3/4]: ");
     scanf("%d", &modo);
 
 
@@ -239,6 +240,33 @@ else if (modo == 3)
     system(comando);
 }
 
+else if (modo == 4)
+{
+    generarErdosRenyi(red, P_ENLACE);
+    generar_listas(red);
+
+    int M = 30;   // Resolución del campo vectorial
+
+    // Generar campo vectorial
+    printf("Generando campo vectorial...\n");
+    genera_campo(&params, N_NODOS, P_ENLACE, M);
+
+    // Lanzar gnuplot
+    system("if not exist Plots mkdir Plots");
+    char comando[512];
+    snprintf(comando, sizeof(comando),
+        "start gnuplot "
+        "-e \"N_val=%d\" "
+        "-e \"alpha_val=%g\" -e \"beta_val=%g\" "
+        "-e \"mu_val=%g\" -e \"p_enlace=%g\" "
+        "Scripts/plot_retrato_fases.gp",
+        N_NODOS,
+        (double)params.alpha, (double)params.beta,
+        (double)params.mu,    (double)P_ENLACE);
+    system(comando);
+
+    printf("Retrato de fases completado.\n");
+}
 else
 {
     printf("Modo no valido. Elige 1, 2 o 3.\n");
