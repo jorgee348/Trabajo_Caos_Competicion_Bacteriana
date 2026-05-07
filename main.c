@@ -125,7 +125,7 @@ int main(void)
 #include "head.h"
 
 #define N_NODOS   1000
-#define P_ENLACE  0.01f
+#define P_ENLACE  0.001f
 #define P_HUECO   0.5f
 #define P_DEPRED  0.4f
 #define PASOS     500
