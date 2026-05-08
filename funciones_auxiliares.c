@@ -169,3 +169,48 @@ void genera_campo(Parametros *params, int N, float p_enlace, int M)
     fclose(fichero);
     printf("Campo vectorial generado: campo.txt (%dx%d puntos)\n", M, M);
 }
+
+void genera_campo_fichero(Parametros *params, int N, double p_enlace, int M, int k)
+{
+    char nombre[64];
+    snprintf(nombre, sizeof(nombre), "Dat_Simulaciones/campo_k%02d.txt", k);
+
+    double k_medio  = (N - 1) * p_enlace;
+    double alpha_ef = params->alpha * k_medio;
+    double beta_ef  = params->beta  * k_medio;
+
+    FILE *fichero = fopen(nombre, "w");
+    if (!fichero)
+    {
+        fprintf(stderr, "Error: no se pudo crear %s\n", nombre);
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < M; i++)
+    {
+        double p = (double)i / (M - 1);
+        for (int j = 0; j < M; j++)
+        {
+            double d = (double)j / (M - 1);
+            double h = 1.0 - p - d;
+
+            if (h <= 0.0 || p <= 0.0 || d <= 0.0)
+            {
+                fprintf(fichero, "%.4f %.4f 0.0000 0.0000 0.0000\n", p, d);
+                continue;
+            }
+
+            double dd  = beta_ef  * p * d - params->mu * d;
+            double dp  = p * (alpha_ef * h - beta_ef * d);
+            double mag = sqrt(dd * dd + dp * dp);
+
+            double dd_n = 0.0, dp_n = 0.0;
+            if (mag > 0) { dd_n = dd / mag; dp_n = dp / mag; }
+
+            fprintf(fichero, "%.4f %.4f %.6f %.6f %.6f\n", p, d, dd_n, dp_n, mag);
+        }
+        fprintf(fichero, "\n");
+    }
+
+    fclose(fichero);
+}

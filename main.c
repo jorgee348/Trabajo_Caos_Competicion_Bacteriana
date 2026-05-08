@@ -124,7 +124,7 @@ int main(void)
 #include <stdlib.h>
 #include "head.h"
 
-#define N_NODOS   1000
+#define N_NODOS   10000
 #define P_ENLACE  0.001f
 #define P_HUECO   0.5f
 #define P_DEPRED  0.4f
@@ -146,6 +146,7 @@ int main(void)
     printf("  2. Barrido de parametros (alpha x mu)\n");
     printf("  3. Trayectoria en el espacio de fases (P vs D)\n");
     printf("  4. Retrato de fases (P vs D)\n");
+    printf("  5. Barrido del parametro k (retratos de fases P vs D)\n");
     printf("Selecciona modo [1/2/3/4]: ");
     scanf("%d", &modo);
 
@@ -266,6 +267,55 @@ else if (modo == 4)
     system(comando);
 
     printf("Retrato de fases completado.\n");
+}
+else if (modo == 5)
+{
+    int M   = 30;
+    int n_k = 50;
+    int N   = 10000;
+
+    printf("Iniciando barrido de k (1 a %d) con N=%d nodos...\n", n_k, N);
+    system("if not exist Plots mkdir Plots");
+
+    for (int k = 1; k <= n_k; k++)
+    {
+        float p_enlace_k = (float)k / (N - 1);
+
+        // Verificar que E* es válido
+        double beta_ef  = params.beta  * k;
+        double alpha_ef = params.alpha * k;
+        double p_star   = params.mu / beta_ef;
+        double d_star   = alpha_ef * (1.0 - p_star) / (alpha_ef + beta_ef);
+
+        if (p_star >= 1.0 || d_star <= 0.0 || p_star + d_star >= 1.0)
+        {
+            printf("  k=%d omitido: E* fuera del simplex\n", k);
+            continue;
+        }
+
+        // Generar campo vectorial
+        genera_campo_fichero(&params, N, p_enlace_k, M, k);
+
+        // Llamar al script del modo 4 pasando el nombre de salida
+        char comando[512];
+        snprintf(comando, sizeof(comando),
+    "C:\\Progra~1\\gnuplot\\bin\\gnuplot.exe "
+    "-e \"N_val=%d\" "
+    "-e \"alpha_val=%g\" -e \"beta_val=%g\" "
+    "-e \"mu_val=%g\" -e \"p_enlace=%g\" "
+    "-e \"k_val=%d\" "
+    "-e \"output='Plots\\\\retrato_fases_k%02d.png'\" "
+    "Scripts/plot_retrato_fases.gp",
+    N,
+    (double)params.alpha, (double)params.beta,
+    (double)params.mu,    (double)p_enlace_k,
+    k, k);
+system(comando);
+
+        printf("  k=%d completado -> Plots/retrato_fases_k%02d.png\n", k, k);
+    }
+
+    printf("Barrido completado. Imagenes en Plots/\n");
 }
 else
 {
