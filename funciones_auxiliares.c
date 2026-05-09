@@ -229,3 +229,102 @@ void genera_campo_fichero(Parametros *params, int N, double p_enlace, int M, int
     printf("Fichero %s cerrado correctamente\n", nombre);
     fflush(stdout);
 }
+
+void barrido_k(Red *red, Estado *estado, Estado *estado_aux,
+               Parametros *params, int N, float p_hueco, float p_depred, int pasos)
+{
+    system("if not exist Plots mkdir Plots");
+    system("if not exist Plots\\Barrido_Erdos mkdir Plots\\Barrido_Erdos");
+    system("if not exist Dat_Simulaciones mkdir Dat_Simulaciones");
+
+    int k_vals[] = {1, 2, 3, 4, 5, 10, 50};
+    int n_k = 7;
+
+    for (int i = 0; i < n_k; i++)
+    {
+        int   k        = k_vals[i];
+        float p_enlace = (float)k / (N - 1);
+
+        printf("\n── Barrido k=%d  (p_enlace=%.5f) ──\n", k, p_enlace);
+        fflush(stdout);
+
+        // ── Liberar listas de la iteración anterior ───────────────────────
+        for (int j = 0; j < N; j++) {
+            if (red->nodos[j].vecinos != NULL) {
+                free(red->nodos[j].vecinos);
+                red->nodos[j].vecinos = NULL;
+            }
+            red->nodos[j].grado = 0;
+        }
+
+        // ── Generar red y condiciones iniciales ───────────────────────────
+        generarErdosRenyi(red, p_enlace);
+        generar_listas(red);
+        generaRedInicial(red, estado, p_hueco, p_depred);
+
+        // ── Guardar trayectoria ───────────────────────────────────────────
+        char nombre[256];
+        snprintf(nombre, sizeof(nombre),
+            "Dat_Simulaciones\\BK_k%d_N%d_a%.2f_b%.2f_mu%.2f_t%d.txt",
+            k, N, params->alpha, params->beta, params->mu, pasos);
+
+        FILE *fichero = fopen(nombre, "w");
+        if (!fichero) {
+            fprintf(stderr, "Error: no se pudo crear %s\n", nombre);
+            continue;
+        }
+        fprintf(fichero, "Paso\tPresa\tDepredador\tHueco\n");
+
+        for (int t = 0; t < pasos; t++)
+        {
+            int nP = 0, nD = 0, nH = 0;
+            for (int j = 0; j < N; j++) {
+                nP += estado->P[j];
+                nD += estado->D[j];
+                nH += estado->H[j];
+            }
+            fprintf(fichero, "%d\t%d\t%d\t%d\n", t, nP, nD, nH);
+            fflush(fichero);
+
+            paso_temporal(red, estado, estado_aux, params);
+        }
+
+        // ── Guardar último paso ───────────────────────────────────────────
+        int nP = 0, nD = 0, nH = 0;
+        for (int j = 0; j < N; j++) {
+            nP += estado->P[j];
+            nD += estado->D[j];
+            nH += estado->H[j];
+        }
+        fprintf(fichero, "%d\t%d\t%d\t%d\n", pasos, nP, nD, nH);
+        fclose(fichero);
+
+        printf("Simulacion k=%d completada. Datos en: %s\n", k, nombre);
+
+        // ── Lanzar gnuplot ────────────────────────────────────────────────
+        char fichero_out[512];
+        snprintf(fichero_out, sizeof(fichero_out),
+            "Plots/Barrido_Erdos/Plot_fases_k%d_N%d_a%.2f_b%.2f_mu%.2f.png",
+            k, N, params->alpha, params->beta, params->mu);
+
+        char comando[1024];
+        snprintf(comando, sizeof(comando),
+            "C:\\Progra~1\\gnuplot\\bin\\gnuplot.exe "
+            "-e \"fichero='%s'\" "
+            "-e \"N_val=%d\" "
+            "-e \"alpha_val=%g\" -e \"beta_val=%g\" "
+            "-e \"mu_val=%g\" -e \"p_enlace=%g\" "
+            "-e \"fichero_out='%s'\" "
+            "-e \"sin_ventana=1\" "
+            "Scripts/plot_espacio_fases.gp",
+            nombre, N,
+            (double)params->alpha, (double)params->beta,
+            (double)params->mu,    (double)p_enlace,
+            fichero_out);
+        system(comando);
+
+        printf("Plot guardado en: %s\n", fichero_out);
+    }
+
+    printf("\nBarrido k completado.\n");
+}

@@ -317,7 +317,19 @@ else if (modo == 5)
     }
 
     printf("Barrido completado. Imagenes en Plots/\n");
-}  
+} 
+
+else if (modo == 6)
+{
+    printf("Barrido de k (1,2,3,4,5,10,50)  N=%d\n", N_NODOS);
+    printf("alpha=%.2f  beta=%.2f  mu=%.2f\n",
+           params.alpha, params.beta, params.mu);
+    printf("Iniciando barrido...\n");
+
+    barrido_k(red, estado, estado_aux, &params,
+              N_NODOS, P_HUECO, P_DEPRED, PASOS);
+}
+
 else
 {
     printf("Modo no valido. Elige 1, 2 o 3.\n");
