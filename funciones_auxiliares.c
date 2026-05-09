@@ -45,31 +45,31 @@ void barrido_parametros(Red *red, Estado *estado, Estado *estado_aux,
 {
     system("if not exist Dat_Simulaciones mkdir Dat_Simulaciones");
 
-    FILE *fp = fopen("Dat_Simulaciones/barrido_alpha_mu.dat", "wb"); // wb → saltos de línea limpios
+    FILE *fp = fopen("Dat_Simulaciones/barrido_beta_mu.dat", "wb");
     if (!fp) {
-        fprintf(stderr, "Error: no se pudo crear barrido_alpha_mu.dat\n");
+        fprintf(stderr, "Error: no se pudo crear barrido_beta_mu.dat\n");
         exit(EXIT_FAILURE);
     }
-    fprintf(fp, "# alpha\tmu\tP_est\tD_est\tregimen\n");
+    fprintf(fp, "# beta\tmu\tP_est\tD_est\tregimen\n");
     fflush(fp);
 
-    float alpha_vals[] = {0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40,
-                      0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.80};
-    float mu_vals[]    = {0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40,
-                      0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.85};
-    int n_alpha = 15, n_mu = 15;
-    int total = n_alpha * n_mu;
+    float beta_vals[] = {0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40,
+                         0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.80};
+    float mu_vals[]   = {0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40,
+                         0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.85};
+    int n_beta = 15, n_mu = 15;
+    int total  = n_beta * n_mu;
     int actual = 0;
 
-    for (int i = 0; i < n_alpha; i++)
+    for (int i = 0; i < n_beta; i++)
     {
-        params->alpha = alpha_vals[i];
+        params->beta = beta_vals[i];
 
         for (int j = 0; j < n_mu; j++)
         {
             params->mu = mu_vals[j];
 
-            // ── Liberar listas de vecinos de forma segura ─────────────────
+            // ── Liberar listas de vecinos ─────────────────────────────────
             for (int k = 0; k < N; k++) {
                 if (red->nodos[k].vecinos != NULL) {
                     free(red->nodos[k].vecinos);
@@ -92,11 +92,11 @@ void barrido_parametros(Red *red, Estado *estado, Estado *estado_aux,
             }
 
             int regimen = 0;
-            if      (nD == 0) regimen = 1;
-            else if (nP == 0) regimen = 2;
+            if      (nD == 0) regimen = 1;   // Solo presas
+            else if (nP == 0) regimen = 2;   // Solo depredadores
 
             fprintf(fp, "%.2f\t%.2f\t%d\t%d\t%d\n",
-                    alpha_vals[i], mu_vals[j], nP, nD, regimen);
+                    beta_vals[i], mu_vals[j], nP, nD, regimen);
             fflush(fp);
 
             // Barra de progreso
@@ -106,14 +106,14 @@ void barrido_parametros(Red *red, Estado *estado, Estado *estado_aux,
             printf("\r[");
             for (int b = 0; b < 20; b++)
                 printf("%c", b < bloques ? '#' : '-');
-            printf("] %3d%%  alpha=%.2f  mu=%.2f  P=%4d  D=%4d",
-                   porcentaje, alpha_vals[i], mu_vals[j], nP, nD);
+            printf("] %3d%%  beta=%.2f  mu=%.2f  P=%4d  D=%4d",
+                   porcentaje, beta_vals[i], mu_vals[j], nP, nD);
             fflush(stdout);
         }
 
-        if (i < n_alpha - 1) {
-        fprintf(fp, "\n\n");
-        fflush(fp);
+        if (i < n_beta - 1) {
+            fprintf(fp, "\n\n");
+            fflush(fp);
         }
     }
 

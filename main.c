@@ -147,7 +147,7 @@ int main(void)
     printf("  3. Trayectoria en el espacio de fases (P vs D)\n");
     printf("  4. Retrato de fases (P vs D)\n");
     printf("  5. Barrido del parametro k (retratos de fases P vs D)\n");
-    printf("Selecciona modo [1/2/3/4]: ");
+    printf("Selecciona modo [1/2/3/4/5/6]: ");
     scanf("%d", &modo);
 
 
@@ -332,7 +332,7 @@ else if (modo == 6)
 
 else
 {
-    printf("Modo no valido. Elige 1, 2 o 3.\n");
+    printf("Modo no valido. Elige 1, 2, 3, 4,5 o 6.\n");
 }
 
 // ── 4. Liberar memoria ────────────────────────────────────────────────
