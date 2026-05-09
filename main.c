@@ -125,9 +125,9 @@ int main(void)
 #include "head.h"
 
 #define N_NODOS   10000
-#define P_ENLACE  0.001f
-#define P_HUECO   0.5f
-#define P_DEPRED  0.4f
+#define P_ENLACE  0.005f
+#define P_HUECO   0.8f
+#define P_DEPRED  0.05f
 #define PASOS     500
 #define SEMILLA   42
 
