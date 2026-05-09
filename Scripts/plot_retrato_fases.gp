@@ -1,12 +1,9 @@
-# Scripts/plot_retrato_fases.gp
-
 # ── Terminal y salida ─────────────────────────────────────────────────────────
 set terminal pngcairo enhanced font "Arial,13" size 900,900
 if (!exists("output")) output = "Plots/retrato_fases.png"
 set output output
 
-# ── Directorio de trabajo ─────────────────────────────────────────────────────
-cd 'C:/Users/Uni/Desktop/Trabajo_Caos_Competicion_Bacteriana'
+# ── SIN cd: las rutas se resuelven desde donde se ejecuta gnuplot ─────────────
 
 # ── Verificar parámetros ──────────────────────────────────────────────────────
 if (!exists("N_val"))     { N_val     = 1000 }
@@ -19,12 +16,10 @@ if (!exists("p_enlace"))  { p_enlace  = 0.01 }
 if (!exists("k_val")) { campo = "Dat_Simulaciones/campo.txt" } \
 else { campo = sprintf("Dat_Simulaciones/campo_k%02d.txt", k_val) }
 
-# ── Verificar que el fichero existe ───────────────────────────────────────────
 print sprintf("Leyendo campo desde: %s", campo)
 stats campo using 1:2 nooutput
 print sprintf("Puntos leidos: %d", STATS_records)
 
-# ── Separador de columnas ─────────────────────────────────────────────────────
 set datafile separator " "
 
 # ── Parámetros derivados ──────────────────────────────────────────────────────
@@ -59,7 +54,7 @@ set cbrange [0:1]
 set colorbox vertical user origin 0.87, 0.15 size 0.025, 0.7
 set cblabel "|| (d., p.) ||" font "Arial,11"
 
-# ── Nulclinas ─────────────────────────────────────────────────────────────────
+# ── Nullclinas ────────────────────────────────────────────────────────────────
 set arrow 1 from p_star, 0.0 to p_star, 1.0 \
     nohead lw 2.5 lc rgb "#cc00cc" front
 
@@ -82,7 +77,7 @@ scale = 0.015
 plot \
     campo using 1:2:5 \
         with image pixels notitle, \
-    campo using 1:2:($3*scale):($4*scale) \
+    campo using 1:2:($4*scale):($3*scale) \
         with vectors head filled \
         size 0.005,15 lc rgb "black" lw 0.6 notitle, \
     nulclina_p(x) \

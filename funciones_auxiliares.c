@@ -172,8 +172,14 @@ void genera_campo(Parametros *params, int N, float p_enlace, int M)
 
 void genera_campo_fichero(Parametros *params, int N, double p_enlace, int M, int k)
 {
-    char nombre[64];
+    char nombre[128];  // aumenta por seguridad
     snprintf(nombre, sizeof(nombre), "Dat_Simulaciones/campo_k%02d.txt", k);
+
+    printf("Intentando crear fichero: %s\n", nombre);
+    fflush(stdout);
+
+    // Crear carpeta si no existe
+    system("if not exist Dat_Simulaciones mkdir Dat_Simulaciones");
 
     double k_medio  = (N - 1) * p_enlace;
     double alpha_ef = params->alpha * k_medio;
@@ -183,8 +189,12 @@ void genera_campo_fichero(Parametros *params, int N, double p_enlace, int M, int
     if (!fichero)
     {
         fprintf(stderr, "Error: no se pudo crear %s\n", nombre);
+        perror("Razon");  // ← imprime la razón exacta del fallo
         exit(EXIT_FAILURE);
     }
+
+    printf("Fichero creado correctamente\n");
+    fflush(stdout);
 
     for (int i = 0; i < M; i++)
     {
@@ -194,7 +204,7 @@ void genera_campo_fichero(Parametros *params, int N, double p_enlace, int M, int
             double d = (double)j / (M - 1);
             double h = 1.0 - p - d;
 
-            if (h <= 0.0 || p <= 0.0 || d <= 0.0)
+            if (h < 0.0)
             {
                 fprintf(fichero, "%.4f %.4f 0.0000 0.0000 0.0000\n", p, d);
                 continue;
@@ -205,12 +215,17 @@ void genera_campo_fichero(Parametros *params, int N, double p_enlace, int M, int
             double mag = sqrt(dd * dd + dp * dp);
 
             double dd_n = 0.0, dp_n = 0.0;
-            if (mag > 0) { dd_n = dd / mag; dp_n = dp / mag; }
+            if (mag > 1e-10) {
+                dd_n = dd / mag;
+                dp_n = dp / mag;
+            }
 
             fprintf(fichero, "%.4f %.4f %.6f %.6f %.6f\n", p, d, dd_n, dp_n, mag);
         }
         fprintf(fichero, "\n");
     }
 
-    fclose(fichero);
+    fclose(fichero);  // ← verifica que tienes este fclose, en tu código no aparecía
+    printf("Fichero %s cerrado correctamente\n", nombre);
+    fflush(stdout);
 }

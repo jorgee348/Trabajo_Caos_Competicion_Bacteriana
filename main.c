@@ -296,27 +296,28 @@ else if (modo == 5)
         // Generar campo vectorial
         genera_campo_fichero(&params, N, p_enlace_k, M, k);
 
-        // Llamar al script del modo 4 pasando el nombre de salida
-        char comando[512];
+        // Lanzar gnuplot desde el directorio del proyecto
+        char comando[768];
         snprintf(comando, sizeof(comando),
-    "C:\\Progra~1\\gnuplot\\bin\\gnuplot.exe "
-    "-e \"N_val=%d\" "
-    "-e \"alpha_val=%g\" -e \"beta_val=%g\" "
-    "-e \"mu_val=%g\" -e \"p_enlace=%g\" "
-    "-e \"k_val=%d\" "
-    "-e \"output='Plots\\\\retrato_fases_k%02d.png'\" "
-    "Scripts/plot_retrato_fases.gp",
-    N,
-    (double)params.alpha, (double)params.beta,
-    (double)params.mu,    (double)p_enlace_k,
-    k, k);
-system(comando);
+            "cd /D C:\\Users\\Uni\\Desktop\\Trabajo_Caos_Competicion_Bacteriana && "
+            "C:\\Progra~1\\gnuplot\\bin\\gnuplot.exe "
+            "-e \"N_val=%d\" "
+            "-e \"alpha_val=%g\" -e \"beta_val=%g\" "
+            "-e \"mu_val=%g\" -e \"p_enlace=%g\" "
+            "-e \"k_val=%d\" "
+            "-e \"output='Plots\\\\retrato_fases_k%02d.png'\" "
+            "Scripts/plot_retrato_fases.gp",
+            N,
+            (double)params.alpha, (double)params.beta,
+            (double)params.mu,    (double)p_enlace_k,
+            k, k);
+        system(comando);
 
         printf("  k=%d completado -> Plots/retrato_fases_k%02d.png\n", k, k);
     }
 
     printf("Barrido completado. Imagenes en Plots/\n");
-}
+}  
 else
 {
     printf("Modo no valido. Elige 1, 2 o 3.\n");
