@@ -1,6 +1,7 @@
 # Scripts/plot_mapa_calor.gp
 
-cd 'C:/Users/julio/Documents/Curso_3/Caos/Trabajo/Trabajo_Caos_Competicion_Bacteriana'
+# cd 'C:/Users/julio/Documents/Curso_3/Caos/Trabajo/Trabajo_Caos_Competicion_Bacteriana'
+cd 'C:/Users/Uni/Desktop/Trabajo_Caos_Competicion_Bacteriana'
 
 fichero = "Dat_Simulaciones/barrido_beta_mu.dat"
 
@@ -23,7 +24,7 @@ set ylabel "mu"
 set cblabel "Nodos P"
 set xrange [0.04:0.81]
 set yrange [0.04:0.86]
-set cbrange [0:1000]
+set cbrange [0:10000]
 set palette defined (\
     0   "#1565C0", \
     100 "#42A5F5", \
@@ -36,7 +37,7 @@ plot fichero using 1:2:3 with image
 # ─── Panel derecho: D estacionario ────────────────────────────────────────────
 set title "Poblacion estacionaria de Depredador (D)"
 set cblabel "Nodos D"
-set cbrange [0:1000]
+set cbrange [0:10000]
 set palette defined (\
     300 "#ECEFF1", \
     500 "#EF9A9A", \
@@ -63,7 +64,7 @@ set ylabel "mu"
 set cblabel "Nodos P"
 set xrange [0.04:0.81]
 set yrange [0.04:0.86]
-set cbrange [0:1000]
+set cbrange [0:10000]
 set palette defined (\
     0   "#1565C0", \
     100 "#42A5F5", \
@@ -76,7 +77,7 @@ plot fichero using 1:2:3 with image
 # ─── Panel derecho: D estacionario ────────────────────────────────────────────
 set title "Poblacion estacionaria de Depredador (D)"
 set cblabel "Nodos D"
-set cbrange [0:1000]
+set cbrange [0:10000]
 set palette defined (\
     300 "#ECEFF1", \
     500 "#EF9A9A", \

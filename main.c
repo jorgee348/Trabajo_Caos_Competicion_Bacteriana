@@ -124,8 +124,8 @@ int main(void)
 #include <stdlib.h>
 #include "head.h"
 
-#define N_NODOS   1000
-#define P_ENLACE  0.003f        //Para mapa de calor, lo interesante es de 0.001-0.005
+#define N_NODOS   10000
+#define P_ENLACE  0.005f        //Para mapa de calor, lo interesante es de 0.001-0.005
 #define P_HUECO   0.3f
 #define P_DEPRED  0.35f
 #define PASOS     500
